@@ -7,33 +7,24 @@ import android.util.Log
 import android.widget.Toast
 import com.example.retrofitexample.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MainContract.View {
     private lateinit var bindingClass: ActivityMainBinding
+    private val presenter = MainPresenter(this)
 
     @SuppressLint
-    fun displayNews(news: News) {
-        Log.d("API", "${news.author}")
-        Log.d("API", "${news.source.name}")
+    override fun displayNews(news: News) {
+        Log.d("API", news.author)
+        Log.d("API", news.source.name)
         bindingClass.author.text = "Author: ${news.author}"
         bindingClass.date.text = "Author: ${news.source.name}"
     }
-    private fun displayError() {
-        Log.d("API", "error loading data")
-        Toast.makeText(MainActivity@ this, "error",
-            Toast.LENGTH_LONG).show()
-    }
 
-    private fun loadData() {
-        Log.d("API", "loadData")
-        val service = TestApiService()
-        service.getLocalNews(object : TestApiService.NewsCallback {
-            override fun onSuccess(news: News) {
-                displayNews(news)
-            }
-            override fun onFailure() {
-                displayError()
-            }
-        })
+    override fun displayError() {
+        Log.d("API", "error loading data")
+        Toast.makeText(
+            this, "error",
+            Toast.LENGTH_LONG
+        ).show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +32,6 @@ class MainActivity : AppCompatActivity() {
         bindingClass = ActivityMainBinding.inflate(layoutInflater)
         setContentView(bindingClass.root)
 
-        bindingClass.button.setOnClickListener{ loadData()}
+        bindingClass.button.setOnClickListener { presenter.loadData() }
     }
 }
