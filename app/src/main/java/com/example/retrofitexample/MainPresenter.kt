@@ -2,11 +2,10 @@ package com.example.retrofitexample
 
 import android.util.Log
 
-class MainPresenter(
-    private val view: MainContract.View,
-) : MainContract.Presenter {
+class MainPresenter : MainContract.Presenter {
+    private var view: MainContract.View? = null
 
-    private val dataSource: IDataSource = TestApiService(this)
+    private val dataSource: IDataSource by lazy { DiHelper.provideIDataSource() }
 
     override fun loadData() {
         Log.d("API", "loadData")
@@ -14,10 +13,18 @@ class MainPresenter(
     }
 
     override fun onNewsReceived(news: News) {
-        view.displayNews(news)
+        view?.displayNews(news)
     }
 
     override fun onError() {
-        view.displayError()
+        view?.displayError()
+    }
+
+    override fun registerView(view: MainContract.View) {
+        this.view = view
+    }
+
+    override fun unregisterView(view: MainContract.View) {
+        this.view = null
     }
 }

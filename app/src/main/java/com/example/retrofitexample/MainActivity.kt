@@ -9,7 +9,7 @@ import com.example.retrofitexample.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), MainContract.View {
     private lateinit var bindingClass: ActivityMainBinding
-    private val presenter = MainPresenter(this)
+    private val presenter = DiHelper.provideMainPresenter()
 
     @SuppressLint
     override fun displayNews(news: News) {
@@ -32,6 +32,13 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         bindingClass = ActivityMainBinding.inflate(layoutInflater)
         setContentView(bindingClass.root)
 
+        presenter.registerView(this)
+
         bindingClass.button.setOnClickListener { presenter.loadData() }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.unregisterView(this)
     }
 }

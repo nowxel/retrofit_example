@@ -10,5 +10,7 @@ interface MainContract {
         fun loadData()
         fun onNewsReceived(news: News)
         fun onError()
+        fun registerView(view: View)
+        fun unregisterView(view: View)
     }
 }
