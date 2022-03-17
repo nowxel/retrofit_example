@@ -8,5 +8,7 @@ interface MainContract {
 
     interface Presenter {
         fun loadData()
+        fun onNewsReceived(news: News)
+        fun onError()
     }
 }

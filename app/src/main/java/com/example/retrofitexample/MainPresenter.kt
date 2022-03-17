@@ -2,17 +2,22 @@ package com.example.retrofitexample
 
 import android.util.Log
 
-class MainPresenter(private val view: MainContract.View): MainContract.Presenter {
+class MainPresenter(
+    private val view: MainContract.View,
+) : MainContract.Presenter {
+
+    private val dataSource: IDataSource = TestApiService(this)
+
     override fun loadData() {
         Log.d("API", "loadData")
-        val service = TestApiService()
-        service.getLocalNews(object : TestApiService.NewsCallback {
-            override fun onSuccess(news: News) {
-                view.displayNews(news)
-            }
-            override fun onFailure() {
-                view.displayError()
-            }
-        })
+        dataSource.getLocalNews()
+    }
+
+    override fun onNewsReceived(news: News) {
+        view.displayNews(news)
+    }
+
+    override fun onError() {
+        view.displayError()
     }
 }
