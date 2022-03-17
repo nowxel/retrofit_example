@@ -4,25 +4,27 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class TestApiService(
-    private val presenter: MainContract.Presenter
-) : IDataSource {
+class TestApiService : IDataSource {
     private val secretKey: String =
         "\$2b\$10\$/nbUpxSofW6UgvmjYVbAbeyh.TNMS8QdmITrxAStZor/cNK7JbqUK"
 
     private val api: TestAPI = DiHelper.provideTestApi()
 
-    override fun getLocalNews() {
+    override fun getLocalNews(
+        onResult: (News) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
         api.getLocalNews(secretKey).enqueue(object : Callback<News> {
             override fun onResponse(call: Call<News>, response: Response<News>) {
-                if (response.code() == 200 && response.body() != null)
-                    presenter.onNewsReceived(response.body()!!)
+                val body = response.body()
+                if (response.code() == 200 && body != null)
+                    onResult(body)
                 else
-                    presenter.onError()
+                    onError(Exception("Bad response"))
             }
 
             override fun onFailure(call: Call<News>, t: Throwable) {
-                presenter.onError()
+                onError(t)
             }
         })
     }

@@ -19,10 +19,10 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         bindingClass.date.text = "Author: ${news.source.name}"
     }
 
-    override fun displayError() {
-        Log.d("API", "error loading data")
+    override fun displayError(throwable: Throwable) {
+        throwable.printStackTrace()
         Toast.makeText(
-            this, "error",
+            this, throwable.message,
             Toast.LENGTH_LONG
         ).show()
     }

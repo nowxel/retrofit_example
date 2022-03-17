@@ -5,19 +5,18 @@ import android.util.Log
 class MainPresenter : MainContract.Presenter {
     private var view: MainContract.View? = null
 
-    private val dataSource: IDataSource by lazy { DiHelper.provideIDataSource() }
+    private val dataSource: IDataSource = DiHelper.provideIDataSource()
 
     override fun loadData() {
         Log.d("API", "loadData")
-        dataSource.getLocalNews()
-    }
-
-    override fun onNewsReceived(news: News) {
-        view?.displayNews(news)
-    }
-
-    override fun onError() {
-        view?.displayError()
+        dataSource.getLocalNews(
+            onResult = {
+                view?.displayNews(it)
+            },
+            onError = {
+                view?.displayError(it)
+            },
+        )
     }
 
     override fun registerView(view: MainContract.View) {
